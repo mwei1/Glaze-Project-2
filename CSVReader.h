@@ -10,6 +10,7 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+#include <iostream>
 
 class CSVReader {
 public:
@@ -28,18 +29,19 @@ public:
                 continue;
             }
             std::stringstream ss(line);
-            std::string name, prepTimestr, difficulty, mainIngredient;
-            if (std::getline(ss, name, ',') && std::getline(ss, prepTimestr, ',') && std::getline(ss, difficulty, ',')) {
-                std::getline(ss, mainIngredient);
+            std::string name, prepTimestr, difficulty, mainIngredient, allergens;
+            if (std::getline(ss, name, ',') && std::getline(ss, prepTimestr, ',') && std::getline(ss, difficulty, ',') && std::getline(ss, mainIngredient, ',')) {
+                std::getline(ss, allergens);
                 //must remove the trailing whitespace at the end of each line
-                if (!mainIngredient.empty() && mainIngredient.back()=='\r') {
-                    mainIngredient.pop_back();
+                if (!allergens.empty() && allergens.back()=='\r') {
+                    allergens.pop_back();
                 }
                 Recipe recipe;
                 recipe.name = name;
                 recipe.prepTime = std::stoi(prepTimestr);
                 recipe.difficulty = difficulty;
                 recipe.mainIngredient = mainIngredient;
+                recipe.allergens = allergens;
                 recipes.push_back(recipe);
             }
         }

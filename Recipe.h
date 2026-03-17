@@ -11,6 +11,7 @@ struct Recipe {
     int prepTime = 0;
     std::string difficulty;
     std::string mainIngredient;
+    std::string allergens;
 };
 
 #endif //GLAZE_PROJECT_2_RECIPE_H

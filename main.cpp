@@ -6,6 +6,9 @@
 #include <vector>
 #include "Trie.h"
 
+#include <optional>
+#include <SFML/Graphics.hpp>
+
 
 int main() {
     std::vector<Recipe> recipes = CSVReader::loadRecipesFromFile("resources/recipes.csv");

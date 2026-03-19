@@ -26,3 +26,8 @@ The group, Glaze, built a C++ application that stores and searches through a dat
 1. Open the project in CLion
 2. Ensure the CMake is configured
 3. Click "Run"
+
+### Configuring SFML
+1. Install MINGW through MSYS2
+2. Run `pacman -S mingw-w64-x86_64-sfml` to install sfml
+3. Switch to the MSYS2 version of MINGW in CLion Toolchains

@@ -9,10 +9,7 @@ find_package(SFML 3 COMPONENTS Graphics Window System Audio REQUIRED)
 add_executable(GlazeProject2
         main.cpp
         Recipe.h
-        Recipe.cpp
         CSVReader.h
-        CSVReader.cpp
-        Trie.cpp
         Trie.h
 )
 

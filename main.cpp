@@ -122,9 +122,9 @@ void recipesToText(vector<Recipe>& recipes, vector<sf::Text>& text, vector<sf::R
     }
 }
 
-//splits given input into at most three strings to roughly fit within box of width 244
-//returns vector of three strings
-vector<string> splitIntoThree(string input, sf::Font font)
+//splits given input into at most four strings to roughly fit within box of width 244
+//returns vector of strings
+vector<string> splitString(string input, sf::Font font)
 {
     vector<string> result;
     vector<string> words;
@@ -197,7 +197,6 @@ int main() {
     //https://fonts.google.com/specimen/Martel
     const sf::Font text("resources/fonts/Martel-Light.ttf");
 
-
     sf::FloatRect sizeRect; //for text resizing/centering
 
     sf::RenderWindow window(sf::VideoMode({1200, 800}), "Dessert Search");
@@ -213,7 +212,7 @@ int main() {
     //https://pixabay.com/music/france-french-accordion-waltz-paris-atmosphere-477503/
     sf::Music music("resources/audio/Music.mp3");
     music.setLooping(true);
-    //music.play();
+    music.play();
 
     //music mute button
     //https://thenounproject.com/icon/loud-speaker-3452892/
@@ -227,13 +226,14 @@ int main() {
     toggleMusic.setScale(sf::Vector2f(0.2, 0.2));
     toggleMusic.setPosition({0.f, 750.f});
 
-    //switch data structure button
+    //data structure in use
     sf::Text structureText1(text, "Using Trie", 20);
     structureText1.setFillColor(accent);
     sizeRect = structureText1.getLocalBounds();
     structureText1.setOrigin(sizeRect.getCenter());
     structureText1.setPosition({1050,108});
 
+    //data structure toggle button
     sf::RectangleShape structureButton ({130.f, 56.f});
     structureButton.setFillColor(accent);
     structureButton.setOutlineThickness(2);
@@ -241,6 +241,7 @@ int main() {
     structureButton.setOrigin({65, 28});
     structureButton.setPosition({1050, 150});
 
+    //data structure toggle button label
     sf::Text structureText2(text, "Switch to\nHash Map", 20);
     structureText2.setFillColor(backgroundColor);
     structureText2.setLineSpacing(0.6f);
@@ -315,7 +316,7 @@ int main() {
     searchIcon.setOrigin(sizeRect.getCenter());
     searchIcon.setPosition({880, 200});
 
-    //performance indicators formatting
+    //performance indicators box
     sf::RectangleShape performanceBox({180.f, 120.0f});
     performanceBox.setOutlineThickness(2);
     performanceBox.setFillColor(backgroundColor);
@@ -323,6 +324,7 @@ int main() {
     performanceBox.setOrigin({90, 0});
     performanceBox.setPosition({1050, 185});
 
+    //trie time text
     sf::Text triePerformance(text, "Last Trie Time:\n " + to_string(0.0f) + " ms", 23);
     triePerformance.setFillColor(accent);
     triePerformance.setLineSpacing(0.7);
@@ -330,6 +332,7 @@ int main() {
     triePerformance.setOrigin({sizeRect.getCenter().x, 0});
     triePerformance.setPosition({1050, 187});
 
+    //hash map time text
     sf::Text mapPerformance(text, "Last Map Time:\n " + to_string(0.0f) + " ms", 23);
     mapPerformance.setFillColor(accent);
     mapPerformance.setLineSpacing(0.7);
@@ -360,7 +363,7 @@ int main() {
     prefix.setOrigin(sizeRect.getCenter());
     prefix.setPosition({1035, 65});
 
-    //recipe box + text
+    //recipe box
     sf::RectangleShape recipeBox({250, 310});
     recipeBox.setOutlineThickness(2);
     recipeBox.setFillColor(backgroundColor);
@@ -368,12 +371,14 @@ int main() {
     recipeBox.setOrigin({125, 0});
     recipeBox.setPosition({1050, 390});
 
+    //recipe box label text
     sf::Text recipeDetails(subtitle, "Recipe Info", 30);
     recipeDetails.setFillColor(accent);
     sizeRect = recipeDetails.getLocalBounds();
     recipeDetails.setOrigin(sizeRect.getCenter());
     recipeDetails.setPosition({1050, 375});
 
+    //filler name in recipe box
     sf::Text recipeDefault(text, "Choose a Recipe", 30);
     recipeDefault.setStyle(sf::Text::Bold);
     recipeDefault.setStyle(sf::Text::Underlined);
@@ -382,6 +387,7 @@ int main() {
     recipeDefault.setOrigin({sizeRect.getCenter().x, 0});
     recipeDefault.setPosition({1050, 435});
 
+    //difficulty header
     sf::Text diffHead(subtitle, "Difficulty", 23);
     diffHead.setStyle(sf::Text::Underlined);
     diffHead.setFillColor(accent);
@@ -389,6 +395,7 @@ int main() {
     diffHead.setOrigin({sizeRect.getCenter().x, 0});
     diffHead.setPosition({980, 510});
 
+    //prep time header
     sf::Text timeHead(subtitle, "Prep Time", 23);
     timeHead.setStyle(sf::Text::Underlined);
     timeHead.setFillColor(accent);
@@ -396,7 +403,7 @@ int main() {
     timeHead.setOrigin({sizeRect.getCenter().x, 0});
     timeHead.setPosition({1110, 510});
 
-
+    //main ingredient header
     sf::Text mainHead(subtitle, "Main Ingredient", 25);
     mainHead.setFillColor(accent);
     mainHead.setStyle(sf::Text::Underlined);
@@ -404,7 +411,7 @@ int main() {
     mainHead.setOrigin({sizeRect.getCenter().x, 0});
     mainHead.setPosition({1050, 570});
 
-
+    //allergens header
     sf::Text allHead(subtitle, "Allergens: ", 25);
     allHead.setStyle(sf::Text::Underlined);
     allHead.setFillColor(accent);
@@ -412,6 +419,9 @@ int main() {
     allHead.setOrigin({sizeRect.getCenter().x, 0});
     allHead.setPosition({1050, 635});
 
+    //recipe box text preformatting
+    sf::Text name(text, "", 28);
+    name.setFillColor(accent);
     sf::Text diff(text, "", 23);
     diff.setFillColor(accent);
     sf::Text time(text, "", 23);
@@ -421,10 +431,6 @@ int main() {
     sf::Text all(text, "", 25);
     all.setFillColor(accent);
 
-    sf::Text name(text, "", 28);
-    name.setFillColor(accent);
-
-
     //Group Name!
     sf::Text group(text, "Team Glaze: Erica Lawrence, Zlata Kovrigina, Michael Wei", 20);
     group.setFillColor(accent);
@@ -433,6 +439,7 @@ int main() {
     group.setPosition({600, 795});
 
 
+    //data structures implementation / logic components
     double trieTime = 0.0;
     double mapTime = 0.0;
 
@@ -454,26 +461,30 @@ int main() {
         t.insert(recipes[i].name, i);
     }
 
+    //display loop
     while (window.isOpen())
     {
         sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
-        //button grow/shrink
+        //music button shrinkage
         if (toggleMusic.getGlobalBounds().contains(mousePos))
             toggleMusic.setScale(sf::Vector2f(0.18, 0.18));
         else
             toggleMusic.setScale(sf::Vector2f(0.2, 0.2));
 
+        //structure switch button shrinkage
         if (structureButton.getGlobalBounds().contains(mousePos))
             structureButton.setScale(sf::Vector2f(0.9, 0.9));
         else
             structureButton.setScale(sf::Vector2f(1, 1));
 
+        //search icon shrinkage
         if (searchIcon.getGlobalBounds().contains(mousePos))
             searchIcon.setScale(sf::Vector2f(0.06, 0.06));
         else
             searchIcon.setScale(sf::Vector2f(.065, .065));
 
+        //checkbox shrinkage
         if (checkbox.getGlobalBounds().contains(mousePos))
             checkbox.setScale(sf::Vector2f(0.18, 0.18));
         else
@@ -488,12 +499,12 @@ int main() {
         else
             quirkyDonut.setScale(sf::Vector2f(0.089, 0.089));
 
-        //hovering over results shrinks
+        //hovering over results shrinkage
         for (int i = 0; i < min(static_cast<int>(resultText.size()), 15); i++)
         {
             if (resultRect[i].getGlobalBounds().contains(mousePos))
             {
-                resultRect[i].setScale(sf::Vector2f(0.95, 0.95));
+                resultRect[i].setScale(sf::Vector2f(0.96, 0.96));
                 resultText[i].setScale(sf::Vector2f(0.95, 0.95));
             }
             else
@@ -503,7 +514,7 @@ int main() {
             }
         }
 
-
+        //event logic
         while (const std::optional event = window.pollEvent())
         {
             if (event->is<sf::Event::Closed>())
@@ -576,7 +587,7 @@ int main() {
                     }
                 }
 
-                //displays clicked recipe
+                //display clicked recipe
                 for (int i = 0; i < min(static_cast<int>(resultText.size()), 15); i++)
                 {
                     if (resultRect[i].getGlobalBounds().contains(mousePos))
@@ -614,14 +625,14 @@ int main() {
                         //search with Hash Map
                     }
                 }
+                //valid typable characters (no special characters / arrow keys)
                 else if (textEvent->unicode >= 32 && textEvent->unicode <= 128)
                     query+=textEvent->unicode;
 
                 //display current search query
                 searchBar.setString(query);
                 sizeRect = searchBar.getLocalBounds();
-
-                //cut off front part of oversized strings
+                //cut off front part of oversized strings like google search bar
                 if (searchBar.getLocalBounds().size.x > 550)
                 {
                     string temp = query;
@@ -634,13 +645,12 @@ int main() {
                 searchBar.setOrigin({0, 18});
                 searchBar.setPosition({305, 200});
 
-                //if using Trie with prefix Search, search present query entry
+                //if using Trie with prefix Search, search current query (without enter)
                 if (usingTrie && prefixSearch && !query.empty())
                 {
                     trieTime = searchTrie(t, prefixSearch, query, currentResults, recipes);
                     recipesToText(currentResults, resultText, resultRect, text);
                 }
-
             }
         }
 
@@ -704,16 +714,17 @@ int main() {
         mapPerformance.setString("Last Map Time:\n" + to_string(mapTime) + " ms");
         window.draw(mapPerformance);
 
-        //recipe box
+        //recipe box and headers
         window.draw(recipeBox);
         window.draw(recipeDetails);
         window.draw(diffHead);
         window.draw(mainHead);
         window.draw(timeHead);
         window.draw(allHead);
+        //display recipe info if prepTime is nonnegative (preset to -1)
         if (currentRecipe.prepTime >= 0)
         {
-            vector<string> temp = splitIntoThree(currentRecipe.name, text);
+            vector<string> temp = splitString(currentRecipe.name, text);
             for (int i = 0; i < temp.size(); i++)
             {
                 sf::Text name(text, "", 28);

@@ -37,25 +37,34 @@ void structureSwitch(bool usingTrie, sf::Text& top, sf::Text& bot, sf::FloatRect
         top.setString("Using Trie");
         sizeRect = top.getLocalBounds();
         top.setOrigin(sizeRect.getCenter());
-        top.setPosition({1090,58});
+        top.setPosition({1090,108});
 
         bot.setString("Switch to\nHash Map");
         sizeRect = bot.getLocalBounds();
         bot.setOrigin(sizeRect.getCenter());
-        bot.setPosition({1090, 100});
+        bot.setPosition({1090, 150});
     }
     else
     {
         top.setString("Using Hash Map");
         sizeRect = top.getLocalBounds();
         top.setOrigin(sizeRect.getCenter());
-        top.setPosition({1090,58});
+        top.setPosition({1090,108});
 
         bot.setString("Switch to\n     Trie");
         sizeRect = bot.getLocalBounds();
         bot.setOrigin(sizeRect.getCenter());
-        bot.setPosition({1090, 100});
+        bot.setPosition({1090, 150});
     }
+}
+
+//toggles checkbox for trie prefix search
+void checkboxSwitch(bool prefixSearch, sf::Sprite& spr, sf::Texture& checked, sf::Texture& unchecked)
+{
+    if (prefixSearch)
+        spr.setTexture(checked);
+    else
+        spr.setTexture(unchecked);
 }
 
 int main() {
@@ -95,7 +104,7 @@ int main() {
     //https://pixabay.com/music/france-french-accordion-waltz-paris-atmosphere-477503/
     sf::Music music("resources/audio/Music.mp3");
     music.setLooping(true);
-    music.play();
+    //music.play();
 
     //music mute button
     //https://thenounproject.com/icon/loud-speaker-3452892/
@@ -114,22 +123,21 @@ int main() {
     structureText1.setFillColor(accent);
     sizeRect = structureText1.getLocalBounds();
     structureText1.setOrigin(sizeRect.getCenter());
-    structureText1.setPosition({1090,58});
+    structureText1.setPosition({1090,108});
 
     sf::RectangleShape structureButton ({130.f, 56.f});
     structureButton.setFillColor(accent);
     structureButton.setOutlineThickness(2);
     structureButton.setOutlineColor(subtitleColor);
     structureButton.setOrigin({65, 28});
-    structureButton.setPosition({1090, 100});
+    structureButton.setPosition({1090, 150});
 
     sf::Text structureText2(text, "Switch to\nHash Map", 20);
     structureText2.setFillColor(backgroundColor);
     structureText2.setLineSpacing(0.6f);
     sizeRect = structureText2.getLocalBounds();
     structureText2.setOrigin(sizeRect.getCenter());
-    structureText2.setPosition({1090, 100});
-
+    structureText2.setPosition({1090, 150});
 
     //beautiful donut
     //https://pngtree.com/freepng/funny-donut-with-colorful-icing-cartoon-eyes-expressive-face-hand-and-foot-on-transparent-background_23206177.html
@@ -207,25 +215,58 @@ int main() {
     performanceBox.setFillColor(backgroundColor);
     performanceBox.setOutlineColor(titleColor);
     performanceBox.setOrigin({90, 0});
-    performanceBox.setPosition({1090, 135});
+    performanceBox.setPosition({1090, 185});
 
     sf::Text triePerformance(text, "Last Trie Time:\n   " + to_string(trieTime), 23);
     triePerformance.setFillColor(accent);
     triePerformance.setLineSpacing(0.7);
     sizeRect = triePerformance.getLocalBounds();
     triePerformance.setOrigin({sizeRect.getCenter().x, 0});
-    triePerformance.setPosition({1090, 137});
+    triePerformance.setPosition({1090, 187});
 
     sf::Text mapPerformance(text, "Last Map Time:\n   " + to_string(mapTime), 23);
     mapPerformance.setFillColor(accent);
     mapPerformance.setLineSpacing(0.7);
     sizeRect = mapPerformance.getLocalBounds();
     mapPerformance.setOrigin({sizeRect.getCenter().x, 0});
-    mapPerformance.setPosition({1090, 195});
+    mapPerformance.setPosition({1090, 245});
+
+    //toggle checkbox for trie prefix search
+    //https://www.flaticon.com/free-icon/unchecked_8924271
+    sf::Texture unchecked;
+    unchecked.loadFromFile("resources/images/unchecked.png");
+    //https://www.flaticon.com/free-icon/checkbox_2618312
+    sf::Texture checked;
+    checked.loadFromFile("resources/images/checked.png");
+
+    sf::Sprite checkbox(unchecked);
+    checkbox.setScale(sf::Vector2f(0.2, 0.2));
+    sizeRect = checkbox.getLocalBounds();
+    checkbox.setOrigin(sizeRect.getCenter());
+    checkbox.setPosition({1145, 65});
+
+    //prefix search toggle text
+    sf::Text prefix(text, "Toggle Trie\nPrefix Search", 15);
+    prefix.setFillColor(accent);
+    prefix.setLineSpacing(0.7);
+    prefix.setStyle(sf::Text::Bold);
+    sizeRect = prefix.getLocalBounds();
+    prefix.setOrigin(sizeRect.getCenter());
+    prefix.setPosition({1070, 65});
+
+
+    //Group Name!
+    sf::Text name(text, "Team Glaze: Erica Lawrence, Zlata Kovrigina, Michael Wei", 20);
+    name.setFillColor(accent);
+    sizeRect = name.getLocalBounds();
+    name.setOrigin({sizeRect.getCenter().x, sizeRect.size.y});
+    name.setPosition({600, 795});
 
 
 
     bool usingTrie = true;
+    bool prefixSearch = false;
+    vector<Recipe> currentResults;
 
     //load recipes from csv
     vector<Recipe> recipes = CSVReader::loadRecipesFromFile("resources/recipes.csv");
@@ -235,7 +276,6 @@ int main() {
     for (int i=0;i<recipes.size();i++) {
         t.insert(recipes[i].name, i);
     }
-
 
     while (window.isOpen())
     {
@@ -256,6 +296,11 @@ int main() {
             searchIcon.setScale(sf::Vector2f(0.06, 0.06));
         else
             searchIcon.setScale(sf::Vector2f(.065, .065));
+
+        if (checkbox.getGlobalBounds().contains(mousePos))
+            checkbox.setScale(sf::Vector2f(0.18, 0.18));
+        else
+            checkbox.setScale(sf::Vector2f(0.2, 0.2));
 
         //donut rotation
         if (quirkyDonut.getGlobalBounds().contains(mousePos))
@@ -290,6 +335,13 @@ int main() {
                 {
                     usingTrie = !usingTrie;
                     structureSwitch(usingTrie, structureText1, structureText2, sizeRect);
+                }
+
+                //toggle trie prefix search
+                if (checkbox.getGlobalBounds().contains(mousePos))
+                {
+                    prefixSearch = !prefixSearch;
+                    checkboxSwitch(prefixSearch, checkbox, checked, unchecked);
                 }
 
                 //highlight search bar
@@ -340,17 +392,21 @@ int main() {
 
         window.clear(backgroundColor);
 
-        window.draw(toggleMusic);
-
         //title + subtitle
         window.draw(titleText);
         window.draw(subtitleText);
+
+        //buttons
+        window.draw(toggleMusic);
+        window.draw(checkbox);
+        window.draw(prefix);
 
         //structure
         window.draw(structureButton);
         window.draw(structureText1);
         window.draw(structureText2);
 
+        //search bar + results
         window.draw(resultsBar);
         window.draw(defaultResult);
 
@@ -362,12 +418,14 @@ int main() {
         window.draw(searchBar);
         window.draw(searchIcon);
 
-
+        //performance indicators
         window.draw(performanceBox);
         window.draw(triePerformance);
         window.draw(mapPerformance);
 
+        //fun things
         window.draw(quirkyDonut);
+        window.draw(name);
 
         window.display();
     }

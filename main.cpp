@@ -173,6 +173,21 @@ int main() {
     bar.setOutlineColor(accent);
     bar.setOutlineThickness(1.f);
 
+    //result bar outline
+    sf::RectangleShape resultsBar({560, 35});
+    resultsBar.setFillColor(backgroundColor);
+    resultsBar.setOutlineThickness(1);
+    resultsBar.setOutlineColor(accent);
+    resultsBar.setOrigin({280, 17.5});
+    resultsBar.setPosition({600, 240});
+
+    //result bar default text
+    sf::Text defaultResult(text, "No Results Yet! Try Searching Something!", 25);
+    defaultResult.setFillColor(accent);
+    sizeRect = defaultResult.getLocalBounds();
+    defaultResult.setOrigin({sizeRect.getCenter()});
+    defaultResult.setPosition({resultsBar.getPosition().x, resultsBar.getPosition().y + 2});
+
     //search button
     //https://www.flaticon.com/free-icon/search-interface-symbol_54481?term=search&page=1&position=2&origin=search&related_id=54481
     sf::Texture search;
@@ -336,6 +351,8 @@ int main() {
         window.draw(structureText1);
         window.draw(structureText2);
 
+        window.draw(resultsBar);
+        window.draw(defaultResult);
 
         if (searching)
             bar.setOutlineThickness(3.f);
@@ -344,6 +361,7 @@ int main() {
         window.draw(bar);
         window.draw(searchBar);
         window.draw(searchIcon);
+
 
         window.draw(performanceBox);
         window.draw(triePerformance);

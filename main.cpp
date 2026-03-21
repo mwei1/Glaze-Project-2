@@ -37,24 +37,24 @@ void structureSwitch(const bool usingTrie, sf::Text& top, sf::Text& bot, sf::Flo
         top.setString("Using Trie");
         sizeRect = top.getLocalBounds();
         top.setOrigin(sizeRect.getCenter());
-        top.setPosition({1090,108});
+        top.setPosition({1050,108});
 
         bot.setString("Switch to\nHash Map");
         sizeRect = bot.getLocalBounds();
         bot.setOrigin(sizeRect.getCenter());
-        bot.setPosition({1090, 150});
+        bot.setPosition({1050, 150});
     }
     else
     {
         top.setString("Using Hash Map");
         sizeRect = top.getLocalBounds();
         top.setOrigin(sizeRect.getCenter());
-        top.setPosition({1090,108});
+        top.setPosition({1050,108});
 
         bot.setString("Switch to\n     Trie");
         sizeRect = bot.getLocalBounds();
         bot.setOrigin(sizeRect.getCenter());
-        bot.setPosition({1090, 150});
+        bot.setPosition({1050, 150});
     }
 }
 
@@ -159,7 +159,7 @@ int main() {
     //https://pixabay.com/music/france-french-accordion-waltz-paris-atmosphere-477503/
     sf::Music music("resources/audio/Music.mp3");
     music.setLooping(true);
-    //music.play();
+    music.play();
 
     //music mute button
     //https://thenounproject.com/icon/loud-speaker-3452892/
@@ -178,21 +178,21 @@ int main() {
     structureText1.setFillColor(accent);
     sizeRect = structureText1.getLocalBounds();
     structureText1.setOrigin(sizeRect.getCenter());
-    structureText1.setPosition({1090,108});
+    structureText1.setPosition({1050,108});
 
     sf::RectangleShape structureButton ({130.f, 56.f});
     structureButton.setFillColor(accent);
     structureButton.setOutlineThickness(2);
     structureButton.setOutlineColor(subtitleColor);
     structureButton.setOrigin({65, 28});
-    structureButton.setPosition({1090, 150});
+    structureButton.setPosition({1050, 150});
 
     sf::Text structureText2(text, "Switch to\nHash Map", 20);
     structureText2.setFillColor(backgroundColor);
     structureText2.setLineSpacing(0.6f);
     sizeRect = structureText2.getLocalBounds();
     structureText2.setOrigin(sizeRect.getCenter());
-    structureText2.setPosition({1090, 150});
+    structureText2.setPosition({1050, 150});
 
     //beautiful donut
     //https://pngtree.com/freepng/funny-donut-with-colorful-icing-cartoon-eyes-expressive-face-hand-and-foot-on-transparent-background_23206177.html
@@ -267,21 +267,21 @@ int main() {
     performanceBox.setFillColor(backgroundColor);
     performanceBox.setOutlineColor(titleColor);
     performanceBox.setOrigin({90, 0});
-    performanceBox.setPosition({1090, 185});
+    performanceBox.setPosition({1050, 185});
 
     sf::Text triePerformance(text, "Last Trie Time:\n " + to_string(0.0f) + " ms", 23);
     triePerformance.setFillColor(accent);
     triePerformance.setLineSpacing(0.7);
     sizeRect = triePerformance.getLocalBounds();
     triePerformance.setOrigin({sizeRect.getCenter().x, 0});
-    triePerformance.setPosition({1090, 187});
+    triePerformance.setPosition({1050, 187});
 
     sf::Text mapPerformance(text, "Last Map Time:\n " + to_string(0.0f) + " ms", 23);
     mapPerformance.setFillColor(accent);
     mapPerformance.setLineSpacing(0.7);
     sizeRect = mapPerformance.getLocalBounds();
     mapPerformance.setOrigin({sizeRect.getCenter().x, 0});
-    mapPerformance.setPosition({1090, 245});
+    mapPerformance.setPosition({1050, 245});
 
     //toggle checkbox for trie prefix search
     //https://www.flaticon.com/free-icon/unchecked_8924271
@@ -295,7 +295,7 @@ int main() {
     checkbox.setScale(sf::Vector2f(0.2, 0.2));
     sizeRect = checkbox.getLocalBounds();
     checkbox.setOrigin(sizeRect.getCenter());
-    checkbox.setPosition({1145, 65});
+    checkbox.setPosition({1105, 60});
 
     //prefix search toggle text
     sf::Text prefix(text, "Toggle Trie\nPrefix Search", 15);
@@ -304,7 +304,21 @@ int main() {
     prefix.setStyle(sf::Text::Bold);
     sizeRect = prefix.getLocalBounds();
     prefix.setOrigin(sizeRect.getCenter());
-    prefix.setPosition({1070, 65});
+    prefix.setPosition({1035, 65});
+
+    //recipe box
+    sf::RectangleShape recipeBox({250, 300});
+    recipeBox.setOutlineThickness(2);
+    recipeBox.setFillColor(backgroundColor);
+    recipeBox.setOutlineColor(accent);
+    recipeBox.setOrigin({125, 0});
+    recipeBox.setPosition({1050, 400});
+
+    sf::Text recipeDetails(subtitle, "Recipe Info", 30);
+    recipeDetails.setFillColor(accent);
+    sizeRect = recipeDetails.getLocalBounds();
+    recipeDetails.setOrigin(sizeRect.getCenter());
+    recipeDetails.setPosition({1050, 385});
 
 
     //Group Name!
@@ -568,6 +582,10 @@ int main() {
         window.draw(triePerformance);
         mapPerformance.setString("Last Map Time:\n" + to_string(mapTime) + " ms");
         window.draw(mapPerformance);
+
+        //recipe box
+        window.draw(recipeBox);
+        window.draw(recipeDetails);
 
         //fun things
         window.draw(quirkyDonut);

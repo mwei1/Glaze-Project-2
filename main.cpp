@@ -13,6 +13,7 @@
 
 using namespace std;
 
+//toggles music, pauses if currently playing, plays if currently stopped
 void musicSwitch(sf::Music& music, sf::Sprite& spr, sf::Texture& mute, sf::Texture& unmute)
 {
     if (music.getStatus() == sf::Sound::Status::Playing)
@@ -28,6 +29,7 @@ void musicSwitch(sf::Music& music, sf::Sprite& spr, sf::Texture& mute, sf::Textu
 }
 
 int main() {
+    //colors
     sf::Color backgroundColor(245, 228, 218);
     sf::Color titleColor(254, 136, 150);
     sf::Color subtitleColor(254, 147, 152);
@@ -90,20 +92,25 @@ int main() {
     text2.setOrigin({sizeRect.getCenter()});
     text2.setPosition({600, 140});
 
-    //search box
+    //search box text
+    bool searching = false; //used for search box highlight
     string query = "";
-    sf::Text searchBar(text, "WELCOME HELP ME", 30);
+    sf::Text searchBar(text, query, 30);
     searchBar.setFillColor(sf::Color::Black);
     sizeRect = searchBar.getLocalBounds();
-    searchBar.setOrigin({sizeRect.getCenter()});
+    searchBar.setOrigin({sizeRect.getCenter().x-sizeRect.size.x/2.0f, 18});
     searchBar.setPosition({600, 200});
 
-    sf::RectangleShape bar({600.f, 40.f});
-    bar.setOrigin({300.f, 20.f});
+    //search bar outline
+    sf::RectangleShape bar({600.f, 42.f});
+    bar.setOrigin({300.f, 21.f});
     bar.setPosition({600, 200});
-    bar.setOutlineThickness(2.f);
+    bar.setOutlineColor(accent);
+    bar.setOutlineThickness(1.f);
 
+    bool usingTrie = true;
 
+    //load recipes from csv
     vector<Recipe> recipes = CSVReader::loadRecipesFromFile("resources/recipes.csv");
     cout << recipes.size() << "\n\n";
 
@@ -119,11 +126,13 @@ int main() {
     {
         sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
+        //button grow/shrink
         if (toggleMusic.getGlobalBounds().contains(mousePos))
             toggleMusic.setScale(sf::Vector2f(0.18, 0.18));
         else
             toggleMusic.setScale(sf::Vector2f(0.2, 0.2));
 
+        //donut rotation
         if (quirkyDonut.getGlobalBounds().contains(mousePos))
         {
             quirkyDonut.setScale(sf::Vector2f(0.085, 0.085));
@@ -138,10 +147,48 @@ int main() {
             if (event->is<sf::Event::Closed>())
                 window.close();
 
+            //mouse press
             if (event->is<sf::Event::MouseButtonReleased>())
             {
+                searching = false;
+
+                //toggle music
                 if (toggleMusic.getGlobalBounds().contains(mousePos))
                     musicSwitch(music, toggleMusic, muted, unmuted);
+
+                //execute random search
+                if (quirkyDonut.getGlobalBounds().contains(mousePos))
+                    continue; // random search?
+
+                //highlight search bar
+                if (bar.getGlobalBounds().contains(mousePos))
+                    searching = true;
+            }
+
+            //treat any typing as search
+            if (auto* textEvent = event->getIf<sf::Event::TextEntered>())
+            {
+                searching = true;
+                //backspace clears last character
+                if (textEvent->unicode == 8)
+                {
+                    if (!query.empty())
+                        query.pop_back();
+                }
+
+                //enter runs search
+                else if (textEvent->unicode == 13 || textEvent->unicode == 10)
+                {
+                    continue;
+                }
+                else
+                    query+=textEvent->unicode;
+                searchBar.setString(query);
+                sizeRect = searchBar.getLocalBounds();
+                searchBar.setOrigin({sizeRect.getCenter().x-sizeRect.size.x/2.0f, 18});
+                searchBar.setPosition({305, 200});
+
+
             }
         }
 
@@ -153,6 +200,10 @@ int main() {
         window.draw(text1);
         window.draw(text2);
 
+        if (searching)
+            bar.setOutlineThickness(3.f);
+        else
+            bar.setOutlineThickness(1.f);
         window.draw(bar);
         window.draw(searchBar);
 

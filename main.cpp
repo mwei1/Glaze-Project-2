@@ -320,13 +320,57 @@ int main() {
     recipeDetails.setOrigin(sizeRect.getCenter());
     recipeDetails.setPosition({1050, 385});
 
+    sf::Text recipeDefault(text, "Choose a Recipe", 25);
+    recipeDefault.setFillColor(accent);
+    sizeRect = recipeDefault.getLocalBounds();
+    recipeDefault.setOrigin({sizeRect.getCenter().x, 0});
+    recipeDefault.setPosition({1050, 405});
+
+    sf::Text diffHead(subtitle, "Difficulty", 23);
+    diffHead.setFillColor(accent);
+    sizeRect = diffHead.getLocalBounds();
+    diffHead.setOrigin({sizeRect.getCenter().x, 0});
+    diffHead.setPosition({980, 510});
+
+    sf::Text timeHead(subtitle, "Prep Time", 23);
+    timeHead.setFillColor(accent);
+    sizeRect = timeHead.getLocalBounds();
+    timeHead.setOrigin({sizeRect.getCenter().x, 0});
+    timeHead.setPosition({1110, 510});
+
+
+    sf::Text mainHead(subtitle, "Main Ingredient", 25);
+    mainHead.setFillColor(accent);
+    sizeRect = mainHead.getLocalBounds();
+    mainHead.setOrigin({sizeRect.getCenter().x, 0});
+    mainHead.setPosition({1050, 570});
+
+
+    sf::Text allHead(subtitle, "Allergens: ", 25);
+    allHead.setFillColor(accent);
+    sizeRect = allHead.getLocalBounds();
+    allHead.setOrigin({sizeRect.getCenter().x, 0});
+    allHead.setPosition({1050, 635});
+
+    sf::Text diff(text, "", 23);
+    diff.setFillColor(accent);
+    sf::Text time(text, "", 23);
+    time.setFillColor(accent);
+    sf::Text main(text, "", 25);
+    main.setFillColor(accent);
+    sf::Text all(text, "", 25);
+    all.setFillColor(accent);
+
+    sf::Text name(text, "", 28);
+    name.setFillColor(accent);
+
 
     //Group Name!
-    sf::Text name(text, "Team Glaze: Erica Lawrence, Zlata Kovrigina, Michael Wei", 20);
-    name.setFillColor(accent);
-    sizeRect = name.getLocalBounds();
-    name.setOrigin({sizeRect.getCenter().x, sizeRect.size.y});
-    name.setPosition({600, 795});
+    sf::Text group(text, "Team Glaze: Erica Lawrence, Zlata Kovrigina, Michael Wei", 20);
+    group.setFillColor(accent);
+    sizeRect = group.getLocalBounds();
+    group.setOrigin({sizeRect.getCenter().x, sizeRect.size.y});
+    group.setPosition({600, 795});
 
 
     double trieTime = 0.0;
@@ -596,10 +640,55 @@ int main() {
         //recipe box
         window.draw(recipeBox);
         window.draw(recipeDetails);
+        window.draw(diffHead);
+        window.draw(mainHead);
+        window.draw(timeHead);
+        window.draw(allHead);
+        if (currentRecipe.prepTime >= 0)
+        {
+            name.setString(currentRecipe.name);
+            sizeRect = name.getLocalBounds();
+            name.setOrigin({sizeRect.getCenter().x, 0});
+            name.setPosition({1050, 405});
+
+            diff.setString(currentRecipe.difficulty);
+            sizeRect = diff.getLocalBounds();
+            diff.setOrigin({sizeRect.getCenter().x, 0});
+            diff.setPosition({980, 540});
+
+            main.setString(currentRecipe.mainIngredient);
+            sizeRect = main.getLocalBounds();
+            main.setOrigin({sizeRect.getCenter().x, 0});
+            main.setPosition({1050, 600});
+
+            time.setString(to_string(currentRecipe.prepTime));
+            sizeRect = time.getLocalBounds();
+            time.setOrigin({sizeRect.getCenter().x, 0});
+            time.setPosition({1110, 540});
+
+            all.setString(currentRecipe.allergens);
+            sizeRect = all.getLocalBounds();
+            all.setOrigin({sizeRect.getCenter().x, 0});
+            if (sizeRect.size.x > 244.0f)
+                all.setScale(sf::Vector2f{244.0f/sizeRect.size.x, 1.0f});
+            else
+                all.setScale(sf::Vector2f{1.0, 1.0});
+            all.setPosition({1050, 665});
+
+            window.draw(name);
+            window.draw(diff);
+            window.draw(main);
+            window.draw(time);
+            window.draw(all);
+        }
+        else
+        {
+            window.draw(recipeDefault);
+        }
 
         //fun things
         window.draw(quirkyDonut);
-        window.draw(name);
+        window.draw(group);
 
         window.display();
     }

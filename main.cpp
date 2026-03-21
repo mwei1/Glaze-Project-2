@@ -28,12 +28,50 @@ void musicSwitch(sf::Music& music, sf::Sprite& spr, sf::Texture& mute, sf::Textu
     }
 }
 
+//toggles buttons and text for structure switching
+void structureSwitch(bool usingTrie, sf::Text& top, sf::Text& bot, sf::FloatRect sizeRect)
+{
+    if (usingTrie)
+    {
+        top.setString("Using Trie");
+        sizeRect = top.getLocalBounds();
+        top.setOrigin(sizeRect.getCenter());
+        top.setPosition({1090,58});
+
+        bot.setString("Switch to\nHash Map");
+        sizeRect = bot.getLocalBounds();
+        bot.setOrigin(sizeRect.getCenter());
+        bot.setPosition({1090, 100});
+    }
+    else
+    {
+        top.setString("Using Hash Map");
+        sizeRect = top.getLocalBounds();
+        top.setOrigin(sizeRect.getCenter());
+        top.setPosition({1090,58});
+
+        bot.setString("Switch to\n     Trie");
+        sizeRect = bot.getLocalBounds();
+        bot.setOrigin(sizeRect.getCenter());
+        bot.setPosition({1090, 100});
+    }
+}
+
 int main() {
     //colors
     sf::Color backgroundColor(245, 228, 218);
     sf::Color titleColor(254, 136, 150);
     sf::Color subtitleColor(254, 147, 152);
     sf::Color accent(211, 101, 130);
+
+    //load fonts
+    //https://www.dafont.com/butter-garlic.font
+    const sf::Font title("resources/fonts/ButterGarlic.ttf");
+    //https://www.dafont.com/es/million-dreams.font
+    const sf::Font subtitle("resources/fonts/Million Dreams.otf");
+    //https://fonts.google.com/specimen/Martel
+    const sf::Font text("resources/fonts/Martel-Light.ttf");
+
 
     sf::FloatRect sizeRect; //for text resizing/centering
 
@@ -64,6 +102,28 @@ int main() {
     toggleMusic.setScale(sf::Vector2f(0.2, 0.2));
     toggleMusic.setPosition({0.f, 750.f});
 
+    //switch data structure button
+    sf::Text structureText1(text, "Using Trie", 20);
+    structureText1.setFillColor(accent);
+    sizeRect = structureText1.getLocalBounds();
+    structureText1.setOrigin(sizeRect.getCenter());
+    structureText1.setPosition({1090,58});
+
+    sf::RectangleShape structureButton ({130.f, 56.f});
+    structureButton.setFillColor(accent);
+    structureButton.setOutlineThickness(2);
+    structureButton.setOutlineColor(subtitleColor);
+    structureButton.setOrigin({65, 28});
+    structureButton.setPosition({1090, 100});
+
+    sf::Text structureText2(text, "Switch to\nHash Map", 20);
+    structureText2.setFillColor(backgroundColor);
+    structureText2.setLineSpacing(0.6f);
+    sizeRect = structureText2.getLocalBounds();
+    structureText2.setOrigin(sizeRect.getCenter());
+    structureText2.setPosition({1090, 100});
+
+
     //beautiful donut
     //https://pngtree.com/freepng/funny-donut-with-colorful-icing-cartoon-eyes-expressive-face-hand-and-foot-on-transparent-background_23206177.html
     sf::Texture donut;
@@ -74,29 +134,22 @@ int main() {
     quirkyDonut.setOrigin(sizeRect.getCenter());
     quirkyDonut.setPosition({0.f + quirkyDonut.getGlobalBounds().size.x / 2.0f, 130.f + quirkyDonut.getGlobalBounds().size.y / 2.0f});
 
-    //load fonts
-    //https://www.dafont.com/butter-garlic.font
-    const sf::Font title("resources/fonts/ButterGarlic.ttf");
-    //https://www.dafont.com/es/million-dreams.font
-    const sf::Font subtitle("resources/fonts/Million Dreams.otf");
-    //https://fonts.google.com/specimen/Martel
-    const sf::Font text("resources/fonts/Martel-Light.ttf");
 
     //title
-    sf::Text text1(title,"Welcome to Dessert Searcher!", 60);
-    text1.setFillColor(titleColor);
-    text1.setOutlineThickness(2);
-    text1.setOutlineColor(accent);
-    sizeRect = text1.getLocalBounds();
-    text1.setOrigin({sizeRect.getCenter()});
-    text1.setPosition({600, 75});
+    sf::Text titleText(title,"Welcome to Dessert Searcher!", 60);
+    titleText.setFillColor(titleColor);
+    titleText.setOutlineThickness(2);
+    titleText.setOutlineColor(accent);
+    sizeRect = titleText.getLocalBounds();
+    titleText.setOrigin({sizeRect.getCenter()});
+    titleText.setPosition({600, 75});
 
     //subtitle
-    sf::Text text2(subtitle, "Search for a Dessert Below", 40);
-    text2.setFillColor(subtitleColor);
-    sizeRect = text2.getLocalBounds();
-    text2.setOrigin({sizeRect.getCenter()});
-    text2.setPosition({600, 140});
+    sf::Text subtitleText(subtitle, "Search for a Dessert Below", 40);
+    subtitleText.setFillColor(subtitleColor);
+    sizeRect = subtitleText.getLocalBounds();
+    subtitleText.setOrigin({sizeRect.getCenter()});
+    subtitleText.setPosition({600, 140});
 
     //search box text
     bool searching = false; //used for search box highlight
@@ -138,6 +191,11 @@ int main() {
         else
             toggleMusic.setScale(sf::Vector2f(0.2, 0.2));
 
+        if (structureButton.getGlobalBounds().contains(mousePos))
+            structureButton.setScale(sf::Vector2f(0.9, 0.9));
+        else
+            structureButton.setScale(sf::Vector2f(1, 1));
+
         //donut rotation
         if (quirkyDonut.getGlobalBounds().contains(mousePos))
         {
@@ -165,6 +223,13 @@ int main() {
                 //execute random search
                 if (quirkyDonut.getGlobalBounds().contains(mousePos))
                     continue; // random search?
+
+                //switch data structures
+                if (structureButton.getGlobalBounds().contains(mousePos))
+                {
+                    usingTrie = !usingTrie;
+                    structureSwitch(usingTrie, structureText1, structureText2, sizeRect);
+                }
 
                 //highlight search bar
                 if (bar.getGlobalBounds().contains(mousePos))
@@ -204,8 +269,15 @@ int main() {
         window.draw(toggleMusic);
         window.draw(quirkyDonut);
 
-        window.draw(text1);
-        window.draw(text2);
+        //title + subtitle
+        window.draw(titleText);
+        window.draw(subtitleText);
+
+        //structure
+        window.draw(structureButton);
+        window.draw(structureText1);
+        window.draw(structureText2);
+
 
         if (searching)
             bar.setOutlineThickness(3.f);

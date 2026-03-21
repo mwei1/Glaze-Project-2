@@ -82,7 +82,7 @@ vector<Recipe> indexToRecipe(vector<Recipe>& recipes, int index)
 }
 
 //searches Trie for given query using either prefix or fulltext search
-float searchTrie(Trie& t, const bool prefixSearch, const string query, vector<Recipe>& result, vector<Recipe>& recipes)
+double searchTrie(Trie& t, const bool prefixSearch, const string query, vector<Recipe>& result, vector<Recipe>& recipes)
 {
     auto t1 = chrono::steady_clock::now();
     vector<int> indices;
@@ -91,7 +91,7 @@ float searchTrie(Trie& t, const bool prefixSearch, const string query, vector<Re
     else
         indices = t.search(query);
     auto t2 = chrono::steady_clock::now();
-    float duration = chrono::duration_cast<chrono::milliseconds>(t2 - t1).count();
+    double duration = chrono::duration_cast<chrono::milliseconds>(t2 - t1).count();
     result.clear();
     result = indicesToRecipes(recipes, indices);
     return duration;
@@ -127,7 +127,7 @@ int main() {
     random_device rd;
     mt19937 rng(rd());
     uniform_real_distribution<float> unif(0.0, 1.0);
-    uniform_int_distribution<int> random_index(0, 999999);
+    uniform_int_distribution<int> random_index(0, 99999);
 
     //colors
     sf::Color backgroundColor(245, 228, 218);
@@ -221,7 +221,7 @@ int main() {
     subtitleText.setPosition({600, 140});
 
     //search box text
-    bool searching = false; //used for search box highlight
+    bool searchBoxHighlight = false; //used for search box highlight
     string query = "";
     sf::Text searchBar(text, query, 30);
     searchBar.setFillColor(sf::Color::Black);
@@ -315,12 +315,13 @@ int main() {
     name.setPosition({600, 795});
 
 
-    float trieTime = 0.0;
-    float mapTime = 0.0;
+    double trieTime = 0.0;
+    double mapTime = 0.0;
 
     bool usingTrie = true;
     bool prefixSearch = false;
 
+    Recipe r;
     vector<Recipe> currentResults;
     vector<sf::Text> resultText;
     vector<sf::RectangleShape> resultRect;
@@ -337,7 +338,6 @@ int main() {
     while (window.isOpen())
     {
         sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-        bool changed = false;
 
         //button grow/shrink
         if (toggleMusic.getGlobalBounds().contains(mousePos))
@@ -392,7 +392,7 @@ int main() {
             //mouse press
             if (event->is<sf::Event::MouseButtonReleased>())
             {
-                searching = false;
+                searchBoxHighlight = false;
 
                 //toggle music
                 if (toggleMusic.getGlobalBounds().contains(mousePos))
@@ -400,7 +400,26 @@ int main() {
 
                 //execute random search
                 if (quirkyDonut.getGlobalBounds().contains(mousePos))
-                    continue; // random search?
+                {
+                    int index = random_index(rng);
+                    currentResults = indexToRecipe(recipes, index);
+                    recipesToText(currentResults, resultText, resultRect, text);
+                    query = currentResults[0].name;
+                    searchBar.setString(query);
+                    sizeRect = searchBar.getLocalBounds();
+                    //cut off front part of oversized strings
+                    if (searchBar.getLocalBounds().size.x > 550)
+                    {
+                        string temp = query;
+                        while (searchBar.getLocalBounds().size.x > 550)
+                        {
+                            temp.erase(0, 1);
+                            searchBar.setString(temp);
+                        }
+                    }
+                    searchBar.setOrigin({0, 18});
+                    searchBar.setPosition({305, 200});
+                }
 
                 //switch data structures
                 if (structureButton.getGlobalBounds().contains(mousePos))
@@ -418,11 +437,11 @@ int main() {
 
                 //highlight search bar
                 if (bar.getGlobalBounds().contains(mousePos))
-                    searching = true;
+                    searchBoxHighlight = true;
 
                 if (searchIcon.getGlobalBounds().contains(mousePos))
                 {
-                    searching = true;
+                    searchBoxHighlight = true;
                     if (query.empty())
                         continue;
                     if (usingTrie)
@@ -448,7 +467,7 @@ int main() {
             //stores as unicode, using https://symbl.cc/en/unicode-table/ as reference
             if (auto* textEvent = event->getIf<sf::Event::TextEntered>())
             {
-                searching = true;
+                searchBoxHighlight = true;
                 //backspace clears last character
                 if (textEvent->unicode == 8)
                 {
@@ -471,7 +490,7 @@ int main() {
                         //search with Hash Map
                     }
                 }
-                else
+                else if (textEvent->unicode >= 32 && textEvent->unicode <= 128)
                     query+=textEvent->unicode;
 
                 searchBar.setString(query);
@@ -535,7 +554,7 @@ int main() {
             }
         }
 
-        if (searching)
+        if (searchBoxHighlight)
             bar.setOutlineThickness(3.f);
         else
             bar.setOutlineThickness(1.f);

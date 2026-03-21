@@ -261,7 +261,7 @@ int main() {
     searchIcon.setOrigin(sizeRect.getCenter());
     searchIcon.setPosition({880, 200});
 
-    //performance indicators
+    //performance indicators formatting
     sf::RectangleShape performanceBox({180.f, 120.0f});
     performanceBox.setOutlineThickness(2);
     performanceBox.setFillColor(backgroundColor);
@@ -306,7 +306,7 @@ int main() {
     prefix.setOrigin(sizeRect.getCenter());
     prefix.setPosition({1035, 65});
 
-    //recipe box
+    //recipe box + text
     sf::RectangleShape recipeBox({250, 300});
     recipeBox.setOutlineThickness(2);
     recipeBox.setFillColor(backgroundColor);
@@ -335,7 +335,8 @@ int main() {
     bool usingTrie = true;
     bool prefixSearch = false;
 
-    Recipe r;
+    Recipe currentRecipe;
+    currentRecipe.prepTime = -1;
     vector<Recipe> currentResults;
     vector<sf::Text> resultText;
     vector<sf::RectangleShape> resultRect;
@@ -383,6 +384,7 @@ int main() {
         else
             quirkyDonut.setScale(sf::Vector2f(0.089, 0.089));
 
+        //hovering over results shrinks
         for (int i = 0; i < min(static_cast<int>(resultText.size()), 15); i++)
         {
             if (resultRect[i].getGlobalBounds().contains(mousePos))
@@ -412,16 +414,16 @@ int main() {
                 if (toggleMusic.getGlobalBounds().contains(mousePos))
                     musicSwitch(music, toggleMusic, muted, unmuted);
 
-                //execute random search
+                //execute random search upon clicking donut (displays too)
                 if (quirkyDonut.getGlobalBounds().contains(mousePos))
                 {
                     int index = random_index(rng);
                     currentResults = indexToRecipe(recipes, index);
                     recipesToText(currentResults, resultText, resultRect, text);
+                    currentRecipe = currentResults[0];
                     query = currentResults[0].name;
                     searchBar.setString(query);
                     sizeRect = searchBar.getLocalBounds();
-                    //cut off front part of oversized strings
                     if (searchBar.getLocalBounds().size.x > 550)
                     {
                         string temp = query;
@@ -453,6 +455,7 @@ int main() {
                 if (bar.getGlobalBounds().contains(mousePos))
                     searchBoxHighlight = true;
 
+                //search icon also searches
                 if (searchIcon.getGlobalBounds().contains(mousePos))
                 {
                     searchBoxHighlight = true;
@@ -468,11 +471,13 @@ int main() {
                         //search with Hash Map
                     }
                 }
+
+                //displays clicked recipe
                 for (int i = 0; i < min(static_cast<int>(resultText.size()), 15); i++)
                 {
                     if (resultRect[i].getGlobalBounds().contains(mousePos))
                     {
-                        Recipe temp = currentResults[i];
+                        currentRecipe = currentResults[i];
                     }
                 }
             }
@@ -482,6 +487,7 @@ int main() {
             if (auto* textEvent = event->getIf<sf::Event::TextEntered>())
             {
                 searchBoxHighlight = true;
+
                 //backspace clears last character
                 if (textEvent->unicode == 8)
                 {
@@ -507,8 +513,10 @@ int main() {
                 else if (textEvent->unicode >= 32 && textEvent->unicode <= 128)
                     query+=textEvent->unicode;
 
+                //display current search query
                 searchBar.setString(query);
                 sizeRect = searchBar.getLocalBounds();
+
                 //cut off front part of oversized strings
                 if (searchBar.getLocalBounds().size.x > 550)
                 {
@@ -522,6 +530,7 @@ int main() {
                 searchBar.setOrigin({0, 18});
                 searchBar.setPosition({305, 200});
 
+                //if using Trie with prefix Search, search present query entry
                 if (usingTrie && prefixSearch && !query.empty())
                 {
                     trieTime = searchTrie(t, prefixSearch, query, currentResults, recipes);
@@ -547,7 +556,7 @@ int main() {
         window.draw(structureText1);
         window.draw(structureText2);
 
-        //search bar + results
+        //default results bar only shows if nothing is being searched
         if (query.empty())
         {
             window.draw(resultsBar);
@@ -555,7 +564,7 @@ int main() {
             resultText.clear();
             resultRect.clear();
         }
-
+        //if results exist, display them
         if (!resultText.empty())
         {
             for (int i = 0; i < min(static_cast<int>(resultText.size()), 15); i++)
@@ -568,6 +577,7 @@ int main() {
             }
         }
 
+        //search bar display
         if (searchBoxHighlight)
             bar.setOutlineThickness(3.f);
         else

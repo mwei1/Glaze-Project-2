@@ -3,6 +3,7 @@
 //
 #include <iostream>
 #include <optional>
+#include <chrono>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
@@ -27,9 +28,10 @@ void musicSwitch(sf::Music& music, sf::Sprite& spr, sf::Texture& mute, sf::Textu
 }
 
 int main() {
+    sf::Color backgroundColor(245, 228, 218);
 
     sf::RenderWindow window(sf::VideoMode({1200, 800}), "Dessert Search");
-    window.clear(sf::Color::White);
+    window.clear(backgroundColor);
 
     //load window icon
     sf::Image icon;
@@ -40,11 +42,9 @@ int main() {
     //https://pixabay.com/music/france-french-accordion-waltz-paris-atmosphere-477503/
     sf::Music music("resources/audio/Music.mp3");
     music.setLooping(true);
-    music.play();
+    //music.play();
 
-    //buttons
-    //sf::Sprite toggleDataStructure;
-
+    //music mute button
     sf::Texture unmuted;
     unmuted.loadFromFile("resources/images/unmute.png");
 
@@ -54,6 +54,20 @@ int main() {
     sf::Sprite toggleMusic(unmuted);
     toggleMusic.setScale(sf::Vector2f(0.2, 0.2));
     toggleMusic.setPosition({0.f, 750.f});
+
+    //load fonts
+    const sf::Font title("resources/fonts/ButterGarlic.ttf");
+
+    sf::Text DessertSearcher(title);
+    DessertSearcher.setString("Welcome to Dessert Searcher!");
+    DessertSearcher.setCharacterSize(60);
+    DessertSearcher.setFillColor(sf::Color::Black);
+    DessertSearcher.setStyle(sf::Text::Bold);
+
+    sf::FloatRect temp = DessertSearcher.getLocalBounds();
+    DessertSearcher.setOrigin({temp.getCenter()});
+    DessertSearcher.setPosition({600, 50});
+
 
 
     vector<Recipe> recipes = CSVReader::loadRecipesFromFile("resources/recipes.csv");
@@ -110,8 +124,11 @@ int main() {
             }
         }
 
-        window.clear(sf::Color::White);
+        window.clear(backgroundColor);
+
         window.draw(toggleMusic);
+        window.draw(DessertSearcher);
+
         window.display();
     }
 

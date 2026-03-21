@@ -29,6 +29,10 @@ void musicSwitch(sf::Music& music, sf::Sprite& spr, sf::Texture& mute, sf::Textu
 
 int main() {
     sf::Color backgroundColor(245, 228, 218);
+    sf::Color titleColor(254, 136, 150);
+    sf::Color subtitleColor(254, 147, 152);
+
+    sf::FloatRect textRect;
 
     sf::RenderWindow window(sf::VideoMode({1200, 800}), "Dessert Search");
     window.clear(backgroundColor);
@@ -57,16 +61,27 @@ int main() {
 
     //load fonts
     const sf::Font title("resources/fonts/ButterGarlic.ttf");
+    const sf::Font subtitle("resources/fonts/Million Dreams.otf");
+    const sf::Font text("resources/fonts/Martel-Light.ttf");
 
-    sf::Text DessertSearcher(title);
-    DessertSearcher.setString("Welcome to Dessert Searcher!");
-    DessertSearcher.setCharacterSize(60);
-    DessertSearcher.setFillColor(sf::Color::Black);
-    DessertSearcher.setStyle(sf::Text::Bold);
+    sf::Text text1(title);
+    text1.setString("Welcome to Dessert Searcher!");
+    text1.setCharacterSize(60);
+    text1.setFillColor(titleColor);
+    textRect = text1.getLocalBounds();
+    text1.setOrigin({textRect.getCenter()});
+    text1.setPosition({600, 75});
 
-    sf::FloatRect temp = DessertSearcher.getLocalBounds();
-    DessertSearcher.setOrigin({temp.getCenter()});
-    DessertSearcher.setPosition({600, 50});
+    sf::Text text2(subtitle);
+    text2.setString("Search for a Dessert Below");
+    text2.setCharacterSize(40);
+    text2.setFillColor(subtitleColor);
+    textRect = text2.getLocalBounds();
+    text2.setOrigin({textRect.getCenter()});
+    text2.setPosition({600, 140});
+
+
+
 
 
 
@@ -127,7 +142,8 @@ int main() {
         window.clear(backgroundColor);
 
         window.draw(toggleMusic);
-        window.draw(DessertSearcher);
+        window.draw(text1);
+        window.draw(text2);
 
         window.display();
     }

@@ -164,7 +164,7 @@ int main() {
     sf::Text searchBar(text, query, 30);
     searchBar.setFillColor(sf::Color::Black);
     sizeRect = searchBar.getLocalBounds();
-    searchBar.setOrigin({sizeRect.getCenter().x-sizeRect.size.x/2.0f, 18});
+    searchBar.setOrigin({0, 18});
     searchBar.setPosition({600, 200});
 
     //search bar outline
@@ -284,17 +284,24 @@ int main() {
                     query+=textEvent->unicode;
                 searchBar.setString(query);
                 sizeRect = searchBar.getLocalBounds();
-                searchBar.setOrigin({sizeRect.getCenter().x-sizeRect.size.x/2.0f, 18});
+                //cut off front part of oversized strings
+                if (searchBar.getLocalBounds().size.x > 550)
+                {
+                    string temp = query;
+                    while (searchBar.getLocalBounds().size.x > 550)
+                    {
+                        temp.erase(0, 1);
+                        searchBar.setString(temp);
+                    }
+                }
+                searchBar.setOrigin({0, 18});
                 searchBar.setPosition({305, 200});
-
-
             }
         }
 
         window.clear(backgroundColor);
 
         window.draw(toggleMusic);
-        window.draw(quirkyDonut);
 
         //title + subtitle
         window.draw(titleText);
@@ -313,6 +320,9 @@ int main() {
         window.draw(bar);
         window.draw(searchBar);
         window.draw(searchIcon);
+
+
+        window.draw(quirkyDonut);
 
         window.display();
     }

@@ -122,12 +122,46 @@ void recipesToText(vector<Recipe>& recipes, vector<sf::Text>& text, vector<sf::R
     }
 }
 
+//splits given input into at most three strings to roughly fit within box of width 244
+//returns vector of three strings
 vector<string> splitIntoThree(string input, sf::Font font)
 {
     vector<string> result;
+    vector<string> words;
 
-    string str = input;
+    //separate words
+    auto pos = input.find(' ');
+    while (pos != string::npos)
+    {
+        words.push_back(input.substr(0, pos));
+        input.erase(0, pos + 1);
+        pos = input.find(' ');
+    }
+    words.push_back(input);
+
+    //start with first word
+    string str = words[0];
     sf::Text text(font, str, 28);
+
+    //add words on
+    for (int i = 1; i < words.size(); i++)
+    {
+        string temp = str + " " + words[i];
+        text.setString(temp);
+
+        //if added length gets too long, push what was before adding
+        if (text.getLocalBounds().size.x > 250.0f)
+        {
+            result.push_back(str);
+            str = words[i];
+        }
+        //if added length not too long, continue to next word
+        else
+            str = temp;
+    }
+    result.push_back(str);
+    return result;
+
     sf::FloatRect sizeRect = text.getLocalBounds();
     string temp;
     while (sizeRect.size.x > 244.0f)
@@ -138,10 +172,7 @@ vector<string> splitIntoThree(string input, sf::Font font)
         sizeRect = text.getLocalBounds();
     }
     auto index = temp.find(' ');
-    //one word
-    if (index == string::npos)
-        return {input};
-    //
+
     result.push_back(str);
 }
 
@@ -182,7 +213,7 @@ int main() {
     //https://pixabay.com/music/france-french-accordion-waltz-paris-atmosphere-477503/
     sf::Music music("resources/audio/Music.mp3");
     music.setLooping(true);
-    music.play();
+    //music.play();
 
     //music mute button
     //https://thenounproject.com/icon/loud-speaker-3452892/
@@ -330,32 +361,36 @@ int main() {
     prefix.setPosition({1035, 65});
 
     //recipe box + text
-    sf::RectangleShape recipeBox({250, 300});
+    sf::RectangleShape recipeBox({250, 310});
     recipeBox.setOutlineThickness(2);
     recipeBox.setFillColor(backgroundColor);
     recipeBox.setOutlineColor(accent);
     recipeBox.setOrigin({125, 0});
-    recipeBox.setPosition({1050, 400});
+    recipeBox.setPosition({1050, 390});
 
     sf::Text recipeDetails(subtitle, "Recipe Info", 30);
     recipeDetails.setFillColor(accent);
     sizeRect = recipeDetails.getLocalBounds();
     recipeDetails.setOrigin(sizeRect.getCenter());
-    recipeDetails.setPosition({1050, 385});
+    recipeDetails.setPosition({1050, 375});
 
-    sf::Text recipeDefault(text, "Choose a Recipe", 25);
+    sf::Text recipeDefault(text, "Choose a Recipe", 30);
+    recipeDefault.setStyle(sf::Text::Bold);
+    recipeDefault.setStyle(sf::Text::Underlined);
     recipeDefault.setFillColor(accent);
     sizeRect = recipeDefault.getLocalBounds();
     recipeDefault.setOrigin({sizeRect.getCenter().x, 0});
-    recipeDefault.setPosition({1050, 405});
+    recipeDefault.setPosition({1050, 435});
 
     sf::Text diffHead(subtitle, "Difficulty", 23);
+    diffHead.setStyle(sf::Text::Underlined);
     diffHead.setFillColor(accent);
     sizeRect = diffHead.getLocalBounds();
     diffHead.setOrigin({sizeRect.getCenter().x, 0});
     diffHead.setPosition({980, 510});
 
     sf::Text timeHead(subtitle, "Prep Time", 23);
+    timeHead.setStyle(sf::Text::Underlined);
     timeHead.setFillColor(accent);
     sizeRect = timeHead.getLocalBounds();
     timeHead.setOrigin({sizeRect.getCenter().x, 0});
@@ -364,12 +399,14 @@ int main() {
 
     sf::Text mainHead(subtitle, "Main Ingredient", 25);
     mainHead.setFillColor(accent);
+    mainHead.setStyle(sf::Text::Underlined);
     sizeRect = mainHead.getLocalBounds();
     mainHead.setOrigin({sizeRect.getCenter().x, 0});
     mainHead.setPosition({1050, 570});
 
 
     sf::Text allHead(subtitle, "Allergens: ", 25);
+    allHead.setStyle(sf::Text::Underlined);
     allHead.setFillColor(accent);
     sizeRect = allHead.getLocalBounds();
     allHead.setOrigin({sizeRect.getCenter().x, 0});
@@ -676,10 +713,21 @@ int main() {
         window.draw(allHead);
         if (currentRecipe.prepTime >= 0)
         {
-            name.setString(currentRecipe.name);
-            sizeRect = name.getLocalBounds();
-            name.setOrigin({sizeRect.getCenter().x, 0});
-            name.setPosition({1050, 405});
+            vector<string> temp = splitIntoThree(currentRecipe.name, text);
+            for (int i = 0; i < temp.size(); i++)
+            {
+                sf::Text name(text, "", 28);
+                name.setFillColor(accent);
+                name.setString(temp[i]);
+                sizeRect = name.getLocalBounds();
+                if (sizeRect.size.x > 244.0f)
+                    name.setScale({244.0f/sizeRect.size.x, 1.0f});
+                else
+                    name.setScale({1.0f, 1.0f});
+                name.setOrigin({sizeRect.getCenter().x, 0});
+                name.setPosition({1050, 450.0f - 15.0f * temp.size() + 30.0f * i});
+                window.draw(name);
+            }
 
             diff.setString(currentRecipe.difficulty);
             sizeRect = diff.getLocalBounds();

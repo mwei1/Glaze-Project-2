@@ -11,6 +11,7 @@
 #include "CSVReader.h"
 #include <vector>
 #include "Trie.h"
+#include "HashTable.h"
 
 using namespace std;
 
@@ -39,14 +40,14 @@ void structureSwitch(const bool usingTrie, sf::Text& top, sf::Text& bot, sf::Flo
         top.setOrigin(sizeRect.getCenter());
         top.setPosition({1050,108});
 
-        bot.setString("Switch to\nHash Map");
+        bot.setString("Switch to\nHash Table");
         sizeRect = bot.getLocalBounds();
         bot.setOrigin(sizeRect.getCenter());
         bot.setPosition({1050, 150});
     }
     else
     {
-        top.setString("Using Hash Map");
+        top.setString("Using Hash Table");
         sizeRect = top.getLocalBounds();
         top.setOrigin(sizeRect.getCenter());
         top.setPosition({1050,108});
@@ -97,6 +98,22 @@ int searchTrie(Trie& t, const bool prefixSearch, const string query, vector<Reci
     result = indicesToRecipes(recipes, indices);
     return duration;
 }
+
+//searches Hash Table for given query
+//returns time in nanoseconds of search
+int searchTable(HashTable& ht, const string query, vector<Recipe>& result, vector<Recipe>& recipes)
+{
+    auto t1 = chrono::steady_clock::now();
+    vector<int> indices = ht.search(query);
+    auto t2 = chrono::steady_clock::now();
+    auto duration = chrono::duration_cast<chrono::nanoseconds>(t2-t1).count();
+
+
+    result.clear();
+    result = indicesToRecipes(recipes, indices);
+    return duration;
+}
+
 //fills text and rectangles vector with COLORLESS text and rectangles corresponding to recipes
 void recipesToText(vector<Recipe>& recipes, vector<sf::Text>& text, vector<sf::RectangleShape>& rectangles, const sf::Font& font)
 {
@@ -243,7 +260,7 @@ int main() {
     structureButton.setPosition({1050, 150});
 
     //data structure toggle button label
-    sf::Text structureText2(text, "Switch to\nHash Map", 20);
+    sf::Text structureText2(text, "Switch to\nHash Table", 20);
     structureText2.setFillColor(backgroundColor);
     structureText2.setLineSpacing(0.6f);
     sizeRect = structureText2.getLocalBounds();
@@ -333,13 +350,13 @@ int main() {
     triePerformance.setOrigin({sizeRect.getCenter().x, 0});
     triePerformance.setPosition({1050, 187});
 
-    //hash map time text
-    sf::Text mapPerformance(text, "Last Map Time:\n N/A ns", 23);
-    mapPerformance.setFillColor(accent);
-    mapPerformance.setLineSpacing(0.7);
-    sizeRect = mapPerformance.getLocalBounds();
-    mapPerformance.setOrigin({sizeRect.getCenter().x, 0});
-    mapPerformance.setPosition({1050, 245});
+    //hash table time text
+    sf::Text tablePerformance(text, "Last Table Time:\n N/A ns", 23);
+    tablePerformance.setFillColor(accent);
+    tablePerformance.setLineSpacing(0.7);
+    sizeRect = tablePerformance.getLocalBounds();
+    tablePerformance.setOrigin({sizeRect.getCenter().x, 0});
+    tablePerformance.setPosition({1050, 245});
 
     //toggle checkbox for trie prefix search
     //https://www.flaticon.com/free-icon/unchecked_8924271
@@ -443,7 +460,7 @@ int main() {
     //data structures implementation / logic components
     //int times in nanoseconds
     int trieTime = 0;
-    int mapTime = 0;
+    int tableTime = 0;
 
     bool usingTrie = true;
     bool prefixSearch = false;
@@ -462,7 +479,10 @@ int main() {
     for (int i=0;i<recipes.size();i++) {
         t.insert(recipes[i].name, i);
     }
-
+    HashTable ht;
+    for (int i = 0; i < recipes.size(); i++) {
+        ht.insert(recipes[i].name, i);
+    }
     //display loop
     while (window.isOpen())
     {
@@ -588,7 +608,8 @@ int main() {
                     }
                     else
                     {
-                        //search with Hash Map
+                        tableTime = searchTable(ht, query, currentResults, recipes);
+                        recipesToText(currentResults, resultText, resultRect, text);
                     }
                 }
 
@@ -627,7 +648,8 @@ int main() {
                     }
                     else
                     {
-                        //search with Hash Map
+                        tableTime = searchTable(ht, query, currentResults, recipes);
+                        recipesToText(currentResults, resultText, resultRect, text);
                     }
                 }
                 //valid typable characters (no special characters / arrow keys)
@@ -714,10 +736,11 @@ int main() {
 
         //performance indicators
         window.draw(performanceBox);
-        triePerformance.setString("Last Trie Time:\n" + to_string(trieTime) + " ns");
+        triePerformance.setString("Last Trie Time:\n " + to_string(trieTime) + " ns");
         window.draw(triePerformance);
-        mapPerformance.setString("Last Map Time:\n" + to_string(mapTime) + " ns");
-        window.draw(mapPerformance);
+        tablePerformance.setString("Last Table Time:\n " + to_string(tableTime) + " ns");
+        tablePerformance.setScale({0.9f, 1.0f});
+        window.draw(tablePerformance);
 
         //recipe box and headers
         window.draw(recipeBox);

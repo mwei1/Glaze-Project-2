@@ -82,7 +82,8 @@ vector<Recipe> indexToRecipe(vector<Recipe>& recipes, int index)
 }
 
 //searches Trie for given query using either prefix or fulltext search
-double searchTrie(Trie& t, const bool prefixSearch, const string query, vector<Recipe>& result, vector<Recipe>& recipes)
+//returns time in nanoseconds of search
+int searchTrie(Trie& t, const bool prefixSearch, const string query, vector<Recipe>& result, vector<Recipe>& recipes)
 {
     auto t1 = chrono::steady_clock::now();
     vector<int> indices;
@@ -91,7 +92,7 @@ double searchTrie(Trie& t, const bool prefixSearch, const string query, vector<R
     else
         indices = t.search(query);
     auto t2 = chrono::steady_clock::now();
-    double duration = chrono::duration_cast<chrono::milliseconds>(t2 - t1).count();
+    auto duration = chrono::duration_cast<chrono::nanoseconds>(t2 - t1).count();
     result.clear();
     result = indicesToRecipes(recipes, indices);
     return duration;
@@ -325,7 +326,7 @@ int main() {
     performanceBox.setPosition({1050, 185});
 
     //trie time text
-    sf::Text triePerformance(text, "Last Trie Time:\n " + to_string(0.0f) + " ms", 23);
+    sf::Text triePerformance(text, "Last Trie Time:\n N/A ns", 23);
     triePerformance.setFillColor(accent);
     triePerformance.setLineSpacing(0.7);
     sizeRect = triePerformance.getLocalBounds();
@@ -333,7 +334,7 @@ int main() {
     triePerformance.setPosition({1050, 187});
 
     //hash map time text
-    sf::Text mapPerformance(text, "Last Map Time:\n " + to_string(0.0f) + " ms", 23);
+    sf::Text mapPerformance(text, "Last Map Time:\n N/A ns", 23);
     mapPerformance.setFillColor(accent);
     mapPerformance.setLineSpacing(0.7);
     sizeRect = mapPerformance.getLocalBounds();
@@ -440,8 +441,9 @@ int main() {
 
 
     //data structures implementation / logic components
-    double trieTime = 0.0;
-    double mapTime = 0.0;
+    //int times in nanoseconds
+    int trieTime = 0;
+    int mapTime = 0;
 
     bool usingTrie = true;
     bool prefixSearch = false;
@@ -709,9 +711,9 @@ int main() {
 
         //performance indicators
         window.draw(performanceBox);
-        triePerformance.setString("Last Trie Time:\n" + to_string(trieTime) + " ms");
+        triePerformance.setString("Last Trie Time:\n" + to_string(trieTime) + " ns");
         window.draw(triePerformance);
-        mapPerformance.setString("Last Map Time:\n" + to_string(mapTime) + " ms");
+        mapPerformance.setString("Last Map Time:\n" + to_string(mapTime) + " ns");
         window.draw(mapPerformance);
 
         //recipe box and headers

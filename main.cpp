@@ -562,10 +562,13 @@ int main() {
                 }
 
                 //toggle trie prefix search
+                //instantly searches with current query
                 if (checkbox.getGlobalBounds().contains(mousePos))
                 {
                     prefixSearch = !prefixSearch;
                     checkboxSwitch(prefixSearch, checkbox, checked, unchecked);
+                    trieTime = searchTrie(t, prefixSearch, query, currentResults, recipes);
+                    recipesToText(currentResults, resultText, resultRect, text);
                 }
 
                 //highlight search bar

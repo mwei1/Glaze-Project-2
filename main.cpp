@@ -11,6 +11,7 @@
 #include "CSVReader.h"
 #include <vector>
 #include "Trie.h"
+#include "HashTable.h"
 
 using namespace std;
 
@@ -462,7 +463,10 @@ int main() {
     for (int i=0;i<recipes.size();i++) {
         t.insert(recipes[i].name, i);
     }
-
+    HashTable ht;
+    for (int i = 0; i < recipes.size(); i++) {
+        ht.insert(recipes[i].name, i);
+    }
     //display loop
     while (window.isOpen())
     {

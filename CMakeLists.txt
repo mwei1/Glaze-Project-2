@@ -11,6 +11,8 @@ add_executable(GlazeProject2
         Recipe.h
         CSVReader.h
         Trie.h
+        HashTable.cpp
+        HashTable.h
 )
 
 target_link_libraries(GlazeProject2 sfml-graphics sfml-audio sfml-window sfml-system)

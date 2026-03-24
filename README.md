@@ -1,5 +1,7 @@
-<H1> COP3530 - Project 2 </h1>
-<H2> Glaze Dessert Search</H2>
+<H1> Glaze Dessert Search </h1>
+
+### COP3530 Project 2 Group 31
+
 Team Members: Erica Lawrence, Zlata Kovrigina, Michael Wei
 
 ## Project Overview
@@ -20,7 +22,15 @@ Our group, Glaze, built a C++ application that stores and searches through a dat
   - Difficulty
   - Main Ingredient
   - Allergens
- 
+## UI Elements
+- Toggle Mute/Unmute button for background Music
+- Random Search via clicking the Donut
+- Toggle Trie Prefix Search (autofill based on string)
+- Switch between using Trie/Hash Table to search
+- Case-Sensitive responsive search bar that updates as characters are typed
+- Recipe Info Display upon search (must click displayed search result from under bar first)
+<img width="1199" height="830" alt="sampleui" src="https://github.com/user-attachments/assets/ef7a0a17-fa5a-4ddc-a075-41ab38012b28" />
+
 ---
 
 ## How to Build and Run
@@ -49,13 +59,3 @@ Our group, Glaze, built a C++ application that stores and searches through a dat
        - Display matching recipes, detailed information, and the execution time within the window
 
 --- 
-## Using the Program
-UI Elements
-- Toggle Mute/Unmute button for background Music
-- Random Search via clicking the Donut
-- Toggle Trie Prefix Search (autofill based on string)
-- Switch between using Trie/Hash Table to search
-- Case-Sensitive responsive search bar that updates as characters are typed
-- Recipe Info Display upon search (must click displayed search result from under bar first)
-<img width="1199" height="830" alt="sampleui" src="https://github.com/user-attachments/assets/ef7a0a17-fa5a-4ddc-a075-41ab38012b28" />
-

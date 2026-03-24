@@ -16,9 +16,9 @@ The [README](https://docs.github.com/en/repositories/managing-your-repositorys-s
 |Code	|\`code`| `code`                                                                                                                                     |
 |Horizontal Rule	|---| <hr>                                                                                                                                       |
 |Link	|\[title](https://www.example.com)| [title](https://www.example.com)                                                                                                           
-|Image	|!\[alt text](image.jpg)| ![alt text](images/high_res_icon.jpg)                                                                                                      |
+|Image	|!\[alt text](image.jpg)| ![alt text](images/quirky_donut.jpg)                                                                                                      |
 Table	| \| Syntax \| Description \| <br> \| - \| - \| <br> \| Header \| Title \| <br> \| Paragraph \| Text \| | <table><tr><th>Syntax</th><th>Description</th></tr><tr><td>Header</td> <td>Title</td></tr><tr><td>Paragraph</td><td>Text</td></tr></table> |
-Fenced Code Block	| \```<br>{<br>  "firstName": "John", <br>  "lastName": "Smith", <br>  "age": 25 <br>} <br> \``` | ![code](images/quirky_donut.png)                                                                                                          |
+Fenced Code Block	| \```<br>{<br>  "firstName": "John", <br>  "lastName": "Smith", <br>  "age": 25 <br>} <br> \``` | N/A                                                                                                     |
 Footnote	| Here's a sentence with a footnote. [\^1] <br> [\^1]: This is the footnote.| Here's a sentence with a footnote. <sup style="font-size: smaller;">[[1]]()</sup> <br> 1. This is the footnote.                            
 
 ### Important Note on ToC

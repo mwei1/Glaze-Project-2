@@ -67,7 +67,7 @@ void HashTable::insert(std::string key, int index) {
     }
     int i = hash(key);
     for (auto node : table[i]) {
-        if (node->key == key && node->index == index) {
+        if (node->key == key) {
             return;
         }
     }
